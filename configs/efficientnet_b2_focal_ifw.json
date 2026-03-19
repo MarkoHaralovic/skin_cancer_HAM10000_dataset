@@ -1,6 +1,6 @@
 {
     "_comment": "EfficientNet-B2 + Focal loss + IFW",
-    "data_path": "C:\\FER\\9TH SEMESTER\\quartile3\\data_science\\skin_cancer_HAM10000_dataset\\dataverse_files",
+    "data_path": "/home/jovyan/dataverse_files",
     "metadata_csv": "HAM10000_metadata",
     "image_dirs": null,
     "val_split": 0.2,

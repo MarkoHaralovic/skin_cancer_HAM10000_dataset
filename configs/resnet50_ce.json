@@ -1,6 +1,6 @@
 {
     "_comment": "Baseline — ResNet-50, CrossEntropy + inverse-frequency weights,",
-    "data_path": "C:\\FER\\9TH SEMESTER\\quartile3\\data_science\\skin_cancer_HAM10000_dataset\\dataverse_files",
+    "data_path": "/home/jovyan/dataverse_files",
     "metadata_csv": "HAM10000_metadata",
     "image_dirs": null,
     "val_split": 0.2,
@@ -23,7 +23,7 @@
     "ifw": false,
 
     "sampler": null,
-    "undersample_rate": 0.2,
+    "undersample_rate": -1,
 
     "output_dir": "output/resnet50_ce_ifw",
     "checkpoint": null,

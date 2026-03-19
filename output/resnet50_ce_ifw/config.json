@@ -1,6 +1,6 @@
 {
-    "config": "configs/resnet50_ce.json",
-    "data_path": "C:\\FER\\9TH SEMESTER\\quartile3\\data_science\\skin_cancer_HAM10000_dataset\\dataverse_files",
+    "config": "./configs/resnet50_ce.json",
+    "data_path": "/home/jovyan/dataverse_files",
     "metadata_csv": "HAM10000_metadata",
     "image_dirs": null,
     "val_split": 0.2,
@@ -19,9 +19,9 @@
     "loss": "cross_entropy",
     "ifw": false,
     "sampler": null,
-    "undersample_rate": 0.2,
+    "undersample_rate": -1,
     "output_dir": "output/resnet50_ce_ifw",
     "checkpoint": null,
     "start_epoch": 0,
-    "_comment": "Baseline \u00e2\u20ac\u201d ResNet-50, CrossEntropy + inverse-frequency weights,"
+    "_comment": "Baseline \u2014 ResNet-50, CrossEntropy + inverse-frequency weights,"
 }
