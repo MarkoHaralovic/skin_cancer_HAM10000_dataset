@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from PIL import Image
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GroupShuffleSplit
 from torch.utils.data import Dataset
 
 
@@ -33,6 +33,8 @@ class HAM10000Dataset(Dataset):
             split='test',
             transform=val_tf,
         )
+        
+        train and val split per row + group (lesion_id) aware
     """
 
     CLASS_NAMES    = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
@@ -49,8 +51,6 @@ class HAM10000Dataset(Dataset):
         transform=None,
         image_dirs=None,
     ):
-
-
         self.transform = transform
 
         meta_path = metadata_csv if os.path.isabs(metadata_csv) \
@@ -75,9 +75,18 @@ class HAM10000Dataset(Dataset):
         if split == 'test':
             split_meta = meta.reset_index(drop=True)
         else:
-            train_meta, val_meta = train_test_split(
-                meta, test_size=val_split, random_state=random_state, stratify=meta['dx'],
+            if 'lesion_id' not in meta.columns:
+                raise ValueError("Grouped train/val split requires a 'lesion_id' column in metadata.")
+
+            gss = GroupShuffleSplit(
+                n_splits=1,
+                test_size=val_split, 
+                random_state=random_state,
             )
+            train_idx, val_idx = next(gss.split(meta, groups=meta['lesion_id']))
+            train_meta = meta.iloc[train_idx]
+            val_meta = meta.iloc[val_idx]
+            
             split_meta = (train_meta if split == 'train' else val_meta).reset_index(drop=True)
 
         self.samples = list(zip(split_meta['path'], split_meta['label']))

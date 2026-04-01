@@ -1,8 +1,17 @@
 {
     "_comment": "Baseline — ResNet-50, CrossEntropy + inverse-frequency weights,",
-    "data_path": "/home/jovyan/dataverse_files",
+    "data_path": "path/to/dataverse_files",
     "metadata_csv": "HAM10000_metadata",
-    "image_dirs": null,
+    "test_metadata_csv": "ISIC2018_Task3_Test_GroundTruth.csv",
+    "image_dirs": {
+        "trainval": [
+            "path/to/dataverse_files/HAM10000_images_part_1",
+            "path/to/dataverse_files/HAM10000_images_part_2"
+        ],
+        "test": [
+            "path/to/dataverse_files/ISIC2018_Task3_Test_Images"
+        ]
+    },
     "val_split": 0.2,
 
     "model": "resnet50",

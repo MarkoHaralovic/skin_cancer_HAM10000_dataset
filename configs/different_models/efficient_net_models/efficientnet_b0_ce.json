@@ -1,0 +1,40 @@
+{
+    "_comment": "Baseline — ResNet-50, CrossEntropy + inverse-frequency weights,",
+    "data_path": "C:\\FER\\10TH SEMESTER\\quartile3\\data_science\\dataverse_files",
+    "metadata_csv": "HAM10000_metadata",
+    "test_metadata_csv": "ISIC2018_Task3_Test_GroundTruth.csv",
+    "image_dirs": {
+        "trainval": [
+            "C:\\FER\\10TH SEMESTER\\quartile3\\data_science\\dataverse_files\\HAM10000_images_part_1",
+            "C:\\FER\\10TH SEMESTER\\quartile3\\data_science\\dataverse_files\\HAM10000_images_part_2"
+        ],
+        "test": [
+            "C:\\FER\\10TH SEMESTER\\quartile3\\data_science\\dataverse_files\\ISIC2018_Task3_Test_Images"
+        ]
+    },
+    "val_split": 0.2,
+
+    "model": "efficientnet_b0",
+    "num_classes": 7,
+    "pretrained": true,
+    "input_size": 224,
+
+    "epochs": 30,
+    "batch_size": 32,
+    "lr": 1e-4,
+    "weight_decay": 1e-4,
+    "num_workers": 4,
+    "seed": 42,
+    "device": "cuda",
+    "log_interval": 100,
+
+    "loss": "cross_entropy",
+    "ifw": false,
+
+    "sampler": null,
+    "undersample_rate": -1,
+
+    "output_dir": "output/efficientnet_b0_ce",
+    "checkpoint": null,
+    "start_epoch": 0
+}

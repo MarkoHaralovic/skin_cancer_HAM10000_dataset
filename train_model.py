@@ -94,8 +94,8 @@ def train(args):
     # ── Transforms ───────────────────────────────────────────────────────────
     train_transform = transforms.Compose([
         transforms.Resize((args.input_size, args.input_size)),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomVerticalFlip(),
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomVerticalFlip(p=0.5),
         transforms.RandomRotation(15),
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
         transforms.ToTensor(),
@@ -111,14 +111,20 @@ def train(args):
     train_dataset = HAM10000Dataset(
         args.data_path, metadata_csv=args.metadata_csv,
         split='train', val_split=args.val_split, random_state=args.seed,
-        transform=train_transform, image_dirs=args.image_dirs,
+        transform=train_transform, image_dirs=args.image_dirs["trainval"] if args.image_dirs else None,
     )
     val_dataset = HAM10000Dataset(
         args.data_path, metadata_csv=args.metadata_csv,
         split='val', val_split=args.val_split, random_state=args.seed,
-        transform=val_transform, image_dirs=args.image_dirs,
+        transform=val_transform, image_dirs=args.image_dirs["trainval"] if args.image_dirs else None,
     )
-    logging.info(f'Train size: {len(train_dataset)}  |  Val size: {len(val_dataset)}')
+    test_dataset = HAM10000Dataset(
+        args.data_path, metadata_csv=args.test_metadata_csv,
+        split='test', val_split=None, random_state=args.seed,
+        transform=val_transform, image_dirs=args.image_dirs["test"] if args.image_dirs else None,
+    )
+    
+    logging.info(f'Train size: {len(train_dataset)}  |  Val size: {len(val_dataset)}  |  Test size: {len(test_dataset)}')
 
     # ── Samplers ─────────────────────────────────────────────────────────────
     if args.sampler == 'balanced':
@@ -135,6 +141,11 @@ def train(args):
     )
     val_loader = torch.utils.data.DataLoader(
         val_dataset, batch_size=args.batch_size, shuffle=False,
+        num_workers=args.num_workers, pin_memory=True, drop_last=False,
+    )
+    
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset, batch_size=args.batch_size, shuffle=False,
         num_workers=args.num_workers, pin_memory=True, drop_last=False,
     )
 
@@ -243,8 +254,17 @@ def train(args):
 
     total_time = str(timedelta(seconds=int(time.time() - start_time)))
     logging.info(f'\nTraining done in {total_time}')
-    logging.info(f'Best macro F1: {best_macro_f1:.4f}  (epoch {best_epoch + 1})')
-
+    logging.info(f'Best macro F1: {best_macro_f1:.4f}  (epoch {best_epoch + 1}) on validation dataset')
+    
+    
+    # ── Heldout test set loop ─────────────────────────────────────────────────────────
+    test_stats   = evaluate(model, criterion, test_loader, device)
+    logging.info(f"\nTest set results:")
+    logging.info(f"  loss={test_stats['loss']:.4f}  acc={test_stats['accuracy']:.2f}%")
+    logging.info(f"  macro_f1={test_stats['macro_f1']:.4f}  balanced_acc={test_stats['balanced_acc']:.4f}")
+    logging.info(f"  malignant_sensitivity={test_stats['malignant_acc']:.4f}  benign_specificity={test_stats['benign_acc']:.4f}")
+    
+    return
 
 if __name__ == '__main__':
     args = parse_args()
